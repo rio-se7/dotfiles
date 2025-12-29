@@ -1,30 +1,43 @@
--- init.lua
+-- ============================================================================
+-- Neovim Configuration
+-- ============================================================================
+-- Modern, minimal, and fast Neovim config for DevOps/Infrastructure work
+-- Optimized for: Lua, Python, Go, Bash, YAML, JSON, Markdown, Dockerfile
 
--- Leader keys must be set before plugins and keymaps
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+-- Set leader keys before loading any plugins
+vim.g.mapleader = ","
+vim.g.maplocalleader = "\\"
 
--- Load core settings
+-- Disable built-in plugins we don't need
+local disabled_built_ins = {
+    "netrw",
+    "netrwPlugin",
+    "netrwSettings",
+    "netrwFileHandlers",
+    "gzip",
+    "zip",
+    "zipPlugin",
+    "tar",
+    "tarPlugin",
+    "getscript",
+    "getscriptPlugin",
+    "vimball",
+    "vimballPlugin",
+    "2html_plugin",
+    "logipat",
+    "rrhelper",
+    "spellfile_plugin",
+    "matchit",
+}
+
+for _, plugin in pairs(disabled_built_ins) do
+    vim.g["loaded_" .. plugin] = 1
+end
+
+-- Load configuration modules
 require("core.options")
 require("core.keymaps")
+require("core.autocmds")
 
--- Bootstrap lazy.nvim --------------------------------------------------------
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable",
-    lazypath,
-  })
-end
-vim.opt.rtp:prepend(lazypath)
-
--- Setup plugins (load all modules under lua/plugins/)
-require("lazy").setup({
-  spec = {
-    { import = "plugins" },
-  },
-})
+-- Bootstrap and load lazy.nvim
+require("core.lazy")
